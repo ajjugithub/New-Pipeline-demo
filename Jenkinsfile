@@ -1,32 +1,10 @@
-#!/usr/bin/env groovy
+/* Requires the Docker Pipeline plugin */
 pipeline {
-    agent any
-    environment {
-        POM_VERSION = readMavenPom().getVersion()
-        BUILD_RELEASE_VERSION = readMavenPom().getVersion().replace("-SNAPSHOT", "")
-        IS_SNAPSHOT = readMavenPom().getVersion().endsWith("-SNAPSHOT")
-        GIT_TAG_COMMIT = sh(script: 'git describe --tags --always', returnStdout: true).trim()
-    }
+    agent { docker { image 'node:16.17.1-alpine' } }
     stages {
-        stage('stage one') {
+        stage('build') {
             steps {
-                script {
-                    tags_extra = "value_1"
-                }
-                echo "tags_extra: ${tags_extra}"
-            }
-        }
-        stage('stage two') {
-            steps {
-                echo "tags_extra: ${tags_extra}"
-            }
-        }
-        stage('stage three') {
-            when {
-                expression { tags_extra != 'bla' }
-            }
-            steps {
-                echo "tags_extra: ${tags_extra}"
+                sh 'node --version'
             }
         }
     }
